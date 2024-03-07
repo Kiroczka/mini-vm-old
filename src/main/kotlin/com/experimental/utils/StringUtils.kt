@@ -1,6 +1,7 @@
 package com.experimental.utils
 
 
-fun String.firstNonEmptyLine(): String {
-    return this.split("\n").find { it.isNotEmpty() } ?: ""
+fun String.firstNewLineIndex(): Int {
+    val indexOfEndLine = this.indexOfFirst { it == '\n' }
+    return if (indexOfEndLine == -1) this.length else indexOfEndLine
 }

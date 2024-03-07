@@ -4,7 +4,7 @@ import com.experimental.exceptions.BuilderWrongArgsSizeException
 
 interface Builder {
     fun build(input: BuilderInput): SyntaxElement
-    fun getType(): PartType
+    fun getType(): SyntaxType
 
     fun validateArgSize(count: Int, input: BuilderInput) {
         validateArgSize(count, count, input)

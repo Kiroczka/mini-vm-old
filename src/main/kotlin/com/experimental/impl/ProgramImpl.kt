@@ -9,6 +9,5 @@ class ProgramImpl(
 ) : Program {
     override fun execute(context: Context) {
         statements.forEach { it.execute(context) }
-        println(context)
     }
 }

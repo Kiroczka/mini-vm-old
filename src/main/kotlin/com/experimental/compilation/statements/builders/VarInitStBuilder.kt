@@ -3,14 +3,16 @@ package com.experimental.compilation.statements.builders
 import com.experimental.compilation.BuilderInput
 import com.experimental.compilation.SyntaxElement
 import com.experimental.compilation.Builder
-import com.experimental.compilation.PartType
-import com.experimental.compilation.StatementSyntaxElement
+import com.experimental.compilation.SyntaxType
+import com.experimental.compilation.StatementSyntaxType
 import com.experimental.components.Expression
 import com.experimental.components.statements.VarInitialization
 import com.experimental.context.Type
 import com.experimental.context.VarName
 
 class VarInitStBuilder : Builder {
+    override fun getType(): SyntaxType = StatementSyntaxType.VAR_INIT
+
     override fun build(input: BuilderInput): SyntaxElement {
         validateArgSize(3, input)
         val elements = input.elements
@@ -19,6 +21,4 @@ class VarInitStBuilder : Builder {
         val expression = elements[2] as Expression
         return VarInitialization(name, type, expression)
     }
-
-    override fun getType(): PartType = StatementSyntaxElement.VAR_INIT
 }

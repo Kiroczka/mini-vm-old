@@ -4,50 +4,65 @@ import com.experimental.Keywords
 import com.experimental.compilation.CodeToCompile
 import com.experimental.compilation.CompileResult
 import com.experimental.compilation.Compiler
-import com.experimental.compilation.ContextSyntaxElement
-import com.experimental.compilation.GeneralSyntaxElement
-import com.experimental.compilation.PartType
-import com.experimental.compilation.StatementSyntaxElement
+import com.experimental.compilation.ContextSyntaxType
+import com.experimental.compilation.GeneralSyntaxType
+import com.experimental.compilation.StatementSyntaxType
 import com.experimental.compilation.SuccessCompileResult
 import com.experimental.compilation.SuccessRequireMoreCompilationResult
+import com.experimental.compilation.SyntaxType
 import com.experimental.compilation.compile
 import com.experimental.exceptions.InternalWrongRegexException
 
 class FunDeclarationCompiler : Compiler {
     companion object {
-        private val REGEX =
-            "^\\s*^fun\\s+(\\w+)\\s*\\(((?:\\w+\\s+\\w+)?\\s*(?:,\\s*\\w+\\s+\\w+\\s*)*)\\)\\s*\\s*\\{((?:.|\\n)*)\\}".toRegex()
+        private val REGEX = "^\\s*fun\\s+(\\w+)\\s*\\((.*)\\)\\s*\\s*\\{((?:.|\\n)*)\\}".toRegex()
     }
 
-
-    override fun getType(): PartType = StatementSyntaxElement.FUN_DECLARATION
+    override fun getType(): SyntaxType = StatementSyntaxType.FUN_DECLARATION
 
     override fun compile(code: String): CompileResult {
         return code.compile(REGEX, this::compile)
     }
 
     fun compile(matchResult: MatchResult, code: String): SuccessCompileResult {
-        val groupsSize = matchResult.groupValues.size
+        val groupsSize = matchResult.groups.size
         if (groupsSize != 4) {
             throw InternalWrongRegexException()
         }
         val funName = matchResult.groupValues[1]
         val arguments = matchResult.groupValues[2]
-        val bodyStart = code.indexOfFirst { it == '{' } + 1
+        val bodyParts: List<CodeToCompile> = resolveBodyParts(matchResult.groupValues[3])
         val endIndex = code.indexOfFirst { it == '}' }
-        val body = code.substring(bodyStart, endIndex)
+
+        val elements = listOf(
+            CodeToCompile(ContextSyntaxType.FUN_NAME, funName),
+            CodeToCompile(ContextSyntaxType.ARGS, arguments),
+        ) + bodyParts
+
+        return SuccessRequireMoreCompilationResult(elements, endIndex)
+    }
+
+    private fun resolveBodyParts(code: String): List<CodeToCompile> {
         val returnIndex = code.indexOf(Keywords.RETURN_KEYWORD)
-        val programEnd = if (returnIndex == -1) endIndex else returnIndex
-        val elements = mutableListOf(
-            CodeToCompile(ContextSyntaxElement.FUN_NAME, funName),
-            CodeToCompile(ContextSyntaxElement.ARGS, arguments),
-            CodeToCompile(GeneralSyntaxElement.PROGRAM, code.substring(matchResult.groups[3]!!.range.first, programEnd)),
-        )
+        val statementsPart = resolveStatementsPart(returnIndex, code)
+
         if (returnIndex != -1) {
-            val returnExpression = body.substring(returnIndex + Keywords.RETURN_KEYWORD.length)
-            elements.add(CodeToCompile(GeneralSyntaxElement.EXPRESSION, returnExpression))
+            val returnPart = resolveReturnPart(returnIndex, code)
+            return listOf(statementsPart, returnPart)
         }
-        return SuccessRequireMoreCompilationResult(elements, endIndex + 1)
+        return listOf(statementsPart)
+    }
+
+    private fun resolveStatementsPart(returnIndex: Int, code: String): CodeToCompile {
+        val programEnd = if (returnIndex == -1) code.length else returnIndex
+        val program = code.substring(0, programEnd)
+        return CodeToCompile(GeneralSyntaxType.PROGRAM, program)
+    }
+
+    private fun resolveReturnPart(returnIndex: Int, code: String): CodeToCompile {
+        val startReturnExpIndex = returnIndex + Keywords.RETURN_KEYWORD.length
+        val returnExpression = code.substring(startReturnExpIndex)
+        return CodeToCompile(GeneralSyntaxType.EXPRESSION, returnExpression)
     }
 
 }

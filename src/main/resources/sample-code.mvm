@@ -1,3 +1,14 @@
-fun printSum(int a, int b):void {
-    println "Sum is " a+b
+int a = 10
+int b = 5
+text comment = "Sum is "
+fun sum(int c, int d){
+    return c+d
 }
+fun printSum(int x, int y) {
+    var sum = x+y
+    println(comment, sum)
+}
+//printSum(a, b)
+printSum(a, b)
+int e = a+sum(1,2)
+println(e)

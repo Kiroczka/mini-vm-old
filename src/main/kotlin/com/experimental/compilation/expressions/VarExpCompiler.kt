@@ -3,9 +3,9 @@ package com.experimental.compilation.expressions
 import com.experimental.compilation.CodeToCompile
 import com.experimental.compilation.CompileResult
 import com.experimental.compilation.Compiler
-import com.experimental.compilation.ContextSyntaxElement
-import com.experimental.compilation.ExpressionSyntaxElement
-import com.experimental.compilation.PartType
+import com.experimental.compilation.ContextSyntaxType
+import com.experimental.compilation.ExpressionSyntaxType
+import com.experimental.compilation.SyntaxType
 import com.experimental.compilation.SuccessCompileResult
 import com.experimental.compilation.SuccessRequireMoreCompilationResult
 import com.experimental.compilation.compile
@@ -15,7 +15,7 @@ class VarExpCompiler : Compiler {
         private val REGEX = "^\\s*\\w+".toRegex()
     }
 
-    override fun getType(): PartType = ExpressionSyntaxElement.VAR
+    override fun getType(): SyntaxType = ExpressionSyntaxType.VAR
 
     override fun compile(code: String): CompileResult {
         return code.compile(REGEX, this::compile)
@@ -24,7 +24,7 @@ class VarExpCompiler : Compiler {
     private fun compile(matchResult: MatchResult): SuccessCompileResult {
         val varName = matchResult.value.trim()
         return SuccessRequireMoreCompilationResult(
-            listOf(CodeToCompile(ContextSyntaxElement.VAR_NAME, varName)),
+            listOf(CodeToCompile(ContextSyntaxType.VAR_NAME, varName)),
             matchResult.range.last
         )
     }

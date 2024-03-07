@@ -1,5 +1,5 @@
 package com.experimental.exceptions
 
-import com.experimental.compilation.PartType
+import com.experimental.compilation.SyntaxType
 
-class BuilderNotFoundException(type: PartType) :CompilationException("Builder with type: $type not found")
+class BuilderNotFoundException(type: SyntaxType) :CompilationException("Builder with type: $type not found")

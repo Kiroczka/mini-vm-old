@@ -15,33 +15,33 @@ class SuccessFinalResult(
 
 interface SyntaxElement
 class CodeToCompile(
-    val type: PartType,
+    val type: SyntaxType,
     val code: String
 )
 
-interface PartType
+interface SyntaxType
 
-enum class GeneralSyntaxElement : PartType {
+enum class GeneralSyntaxType : SyntaxType {
     PROGRAM,
     STATEMENT,
     EXPRESSION,
     COMMENT
 }
 
-enum class StatementSyntaxElement : PartType {
+enum class StatementSyntaxType : SyntaxType {
     VAR_INIT,
     VAR_DECLARATION,
     FUN_DECLARATION,
 }
 
-enum class ContextSyntaxElement : PartType {
+enum class ContextSyntaxType : SyntaxType {
     ARGS,
     VAR_NAME,
     FUN_NAME,
     TYPE
 }
 
-enum class ExpressionSyntaxElement : PartType {
+enum class ExpressionSyntaxType : SyntaxType {
     FUN_CALL,
     ARITHMETIC,
     OPERATOR,

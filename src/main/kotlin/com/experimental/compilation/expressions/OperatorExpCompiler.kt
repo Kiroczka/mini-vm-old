@@ -2,8 +2,8 @@ package com.experimental.compilation.expressions
 
 import com.experimental.compilation.CompileResult
 import com.experimental.compilation.Compiler
-import com.experimental.compilation.ExpressionSyntaxElement
-import com.experimental.compilation.PartType
+import com.experimental.compilation.ExpressionSyntaxType
+import com.experimental.compilation.SyntaxType
 import com.experimental.compilation.compileFinal
 import com.experimental.components.expressions.MinusOperator
 import com.experimental.components.expressions.MultiplyOperator
@@ -14,6 +14,8 @@ class OperatorExpCompiler : Compiler {
     companion object {
         private val REGEX = "^\\s*([+\\-*])".toRegex()
     }
+
+    override fun getType(): SyntaxType = ExpressionSyntaxType.OPERATOR
 
     override fun compile(code: String): CompileResult {
         return code.compileFinal(REGEX, this::compile)
@@ -27,7 +29,5 @@ class OperatorExpCompiler : Compiler {
             else -> throw ArithmeticException("Unknown operator: $rawOperator")
         }
     }
-
-    override fun getType(): PartType = ExpressionSyntaxElement.OPERATOR
 
 }

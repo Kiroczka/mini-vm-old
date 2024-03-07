@@ -15,6 +15,7 @@ import com.experimental.compilation.expressions.builders.FunCallExpBuilder
 import com.experimental.compilation.expressions.builders.VarExpBuilder
 import com.experimental.compilation.factories.BuildersFactory
 import com.experimental.compilation.factories.CompilersFactory
+import com.experimental.compilation.statements.CommentCompiler
 import com.experimental.compilation.statements.FunArgsCompiler
 import com.experimental.compilation.statements.FunCallArgsCompiler
 import com.experimental.compilation.statements.FunDeclarationCompiler
@@ -41,8 +42,8 @@ class MiniVMBuilder {
         )
         val expressionCompilersFactory = CompilersFactory(
             listOf(
-                ArithmeticExpCompiler(),
                 FunCallExpCompiler(),
+                ArithmeticExpCompiler(),
                 LiteralExpCompiler(),
                 VarExpCompiler()
             ), listOf(
@@ -53,8 +54,10 @@ class MiniVMBuilder {
 
             )
         )
-        val expressionCompiler = ExpressionCompiler(expressionCompilersFactory, expressionBuildersFactory)
-
+        val expressionCompiler = ExpressionCompiler(
+            compilersFactory = expressionCompilersFactory,
+            buildersFactory = expressionBuildersFactory
+        )
         val statementBuildersFactory = BuildersFactory(
             listOf(
                 VarInitStBuilder(),
@@ -65,9 +68,10 @@ class MiniVMBuilder {
         )
         val statementCompilersFactory = CompilersFactory(
             listOf(
+                CommentCompiler(),
                 VarInitializationCompiler(),
                 FunDeclarationCompiler(),
-                expressionCompiler,
+                expressionCompiler
             ),
             listOf(
                 expressionCompiler,

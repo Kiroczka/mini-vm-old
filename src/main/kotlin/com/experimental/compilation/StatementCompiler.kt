@@ -5,6 +5,6 @@ import com.experimental.compilation.factories.CompilersFactory
 
 class StatementCompiler(compilersFactory: CompilersFactory, buildersFactory: BuildersFactory) :
     CompilerCoordinator(compilersFactory, buildersFactory) {
-    override fun getType(): PartType = GeneralSyntaxElement.STATEMENT
+    override fun getType(): SyntaxType = GeneralSyntaxType.STATEMENT
 
 }

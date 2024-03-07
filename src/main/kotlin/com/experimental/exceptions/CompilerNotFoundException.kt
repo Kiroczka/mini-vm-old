@@ -1,5 +1,5 @@
 package com.experimental.exceptions
 
-import com.experimental.compilation.PartType
+import com.experimental.compilation.SyntaxType
 
-class CompilerNotFoundException(type: PartType) :CompilationException("Compiler with type: $type not found")
+class CompilerNotFoundException(type: SyntaxType) :CompilationException("Compiler with type: $type not found")

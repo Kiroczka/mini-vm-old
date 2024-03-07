@@ -22,5 +22,5 @@ class TypeCompiler : Compiler {
         return Type.valueOf(type.uppercase())
     }
 
-    override fun getType(): PartType = ContextSyntaxElement.TYPE
+    override fun getType(): SyntaxType = ContextSyntaxType.TYPE
 }

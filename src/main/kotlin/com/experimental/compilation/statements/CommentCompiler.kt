@@ -1,29 +1,26 @@
 package com.experimental.compilation.statements
 
-import com.experimental.compilation.CodeToCompile
 import com.experimental.compilation.CompileResult
 import com.experimental.compilation.Compiler
-import com.experimental.compilation.ContextSyntaxElement
-import com.experimental.compilation.GeneralSyntaxElement
-import com.experimental.compilation.PartType
-import com.experimental.compilation.StatementSyntaxElement
-import com.experimental.compilation.SuccessFinalResult
-import com.experimental.compilation.SuccessRequireMoreCompilationResult
-import com.experimental.context.Arguments
+import com.experimental.compilation.GeneralSyntaxType
+import com.experimental.compilation.SyntaxType
+import com.experimental.compilation.compileFinal
+import com.experimental.components.NothingStatement
+import com.experimental.components.Statement
 
 class CommentCompiler : Compiler {
-    override fun getType(): PartType = GeneralSyntaxElement.COMMENT
+
+    companion object {
+        private val REGEX = "^\\s*//.*".toRegex()
+    }
+
+    override fun getType(): SyntaxType = GeneralSyntaxType.COMMENT
 
     override fun compile(code: String): CompileResult {
-        if (code.isBlank()) {
-            return SuccessFinalResult(Arguments(), code.lastIndex)
-        }
-        val elements = code.split(",").map {
-            CodeToCompile(StatementSyntaxElement.VAR_DECLARATION, it)
-        }
-
-        return SuccessRequireMoreCompilationResult(elements, code.lastIndex)
+        return code.compileFinal(REGEX, this::compile)
     }
+
+    fun compile(ignored: MatchResult): Statement = NothingStatement
 
 
 }

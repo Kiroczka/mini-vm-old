@@ -4,15 +4,14 @@ import com.experimental.compilation.factories.BuildersFactory
 import com.experimental.compilation.factories.CompilersFactory
 import com.experimental.exceptions.CompilationException
 import com.experimental.exceptions.UnknownComponentException
-import com.experimental.utils.firstNonEmptyLine
 
 abstract class CompilerCoordinator(
     private val compilersFactory: CompilersFactory,
     private val buildersFactory: BuildersFactory
 ) : Compiler {
 
-    fun addCompiler(partType: PartType, compiler: Compiler) {
-        compilersFactory.addCompiler(partType, compiler)
+    fun addCompiler(syntaxType: SyntaxType, compiler: Compiler) {
+        compilersFactory.addCompiler(syntaxType, compiler)
     }
 
     override fun compile(code: String): SuccessFinalResult {
@@ -22,10 +21,10 @@ abstract class CompilerCoordinator(
                 return compile(result, compiler.getType())
             }
         }
-        throw UnknownComponentException(code.firstNonEmptyLine())
+        throw UnknownComponentException(code)
     }
 
-    private fun compile(result: SuccessCompileResult, type: PartType): SuccessFinalResult {
+    private fun compile(result: SuccessCompileResult, type: SyntaxType): SuccessFinalResult {
         return when (result) {
             is SuccessFinalResult -> result
             is SuccessRequireMoreCompilationResult -> {
@@ -35,7 +34,7 @@ abstract class CompilerCoordinator(
         }
     }
 
-    private fun buildSyntaxElement(result: SuccessRequireMoreCompilationResult, type: PartType): SyntaxElement {
+    private fun buildSyntaxElement(result: SuccessRequireMoreCompilationResult, type: SyntaxType): SyntaxElement {
         val elements = buildSyntaxElements(result.codeParts)
         val input = BuilderInput(elements)
         val builder = buildersFactory.getBuilder(type)
@@ -43,17 +42,17 @@ abstract class CompilerCoordinator(
     }
 
     private fun buildSyntaxElements(elements: List<CodeToCompile>): List<SyntaxElement> {
-        return elements.map { part ->
-            when (val result = chooseCompiler(part.type).compile(part.code)) {
+        return elements.map { element ->
+            when (val result = chooseCompiler(element.type).compile(element.code)) {
                 is SuccessFinalResult -> result.value
-                is SuccessRequireMoreCompilationResult -> buildSyntaxElement(result, part.type)
+                is SuccessRequireMoreCompilationResult -> buildSyntaxElement(result, element.type)
                 FailedCompileResult ->
-                    throw CompilationException("Unable to compile required part with type: ${part.type} code: ${part.code}")
+                    throw CompilationException("Unable to compile required syntax element with type: ${element.type} code: ${element.code}")
             }
         }
     }
 
-    private fun chooseCompiler(type: PartType): Compiler {
+    private fun chooseCompiler(type: SyntaxType): Compiler {
         if (type == getType()) return this
         return compilersFactory.getCompiler(type)
     }

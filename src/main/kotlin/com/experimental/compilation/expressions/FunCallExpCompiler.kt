@@ -3,9 +3,9 @@ package com.experimental.compilation.expressions
 import com.experimental.compilation.CodeToCompile
 import com.experimental.compilation.CompileResult
 import com.experimental.compilation.Compiler
-import com.experimental.compilation.ContextSyntaxElement
-import com.experimental.compilation.ExpressionSyntaxElement
-import com.experimental.compilation.PartType
+import com.experimental.compilation.ContextSyntaxType
+import com.experimental.compilation.ExpressionSyntaxType
+import com.experimental.compilation.SyntaxType
 import com.experimental.compilation.SuccessCompileResult
 import com.experimental.compilation.SuccessRequireMoreCompilationResult
 import com.experimental.compilation.compile
@@ -15,7 +15,7 @@ class FunCallExpCompiler : Compiler {
         private val REGEX = "^\\s*(\\w+)\\s*\\((.*(?:,.*)*)\\)".toRegex()
     }
 
-    override fun getType(): PartType = ExpressionSyntaxElement.FUN_CALL
+    override fun getType(): SyntaxType = ExpressionSyntaxType.FUN_CALL
 
     override fun compile(code: String): CompileResult {
         return code.compile(REGEX, this::compile)
@@ -26,8 +26,8 @@ class FunCallExpCompiler : Compiler {
         val arguments = result.groupValues[2]
         return SuccessRequireMoreCompilationResult(
             listOf(
-                CodeToCompile(ContextSyntaxElement.FUN_NAME, funName),
-                CodeToCompile(ExpressionSyntaxElement.FUN_CALL_ARGS, arguments),
+                CodeToCompile(ContextSyntaxType.FUN_NAME, funName),
+                CodeToCompile(ExpressionSyntaxType.FUN_CALL_ARGS, arguments),
             ),
             result.range.last
         )

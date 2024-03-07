@@ -6,7 +6,7 @@ import com.experimental.impl.ProgramImpl
 
 class ProgramCompiler(private val statementCompiler: StatementCompiler) :
     Compiler {
-    override fun getType(): PartType = GeneralSyntaxElement.PROGRAM
+    override fun getType(): SyntaxType = GeneralSyntaxType.PROGRAM
 
     override fun compile(code: String): SuccessFinalResult {
         statementCompiler.addCompiler(getType(), this)
