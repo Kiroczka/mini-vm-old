@@ -1,5 +1,7 @@
 package com.experimental.context
 
+import com.experimental.compilation.SyntaxElement
+
 class Variable(
     val name: VarName,
     val value: TypedValue,
@@ -9,4 +11,4 @@ class Variable(
     }
 }
 
-data class VarName(val name: String)
+data class VarName(val name: String) : SyntaxElement

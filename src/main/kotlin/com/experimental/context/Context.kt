@@ -22,16 +22,12 @@ class Context(
             }
             newVariables[it.name] = it
         }
-        return Context(newVariables)
+        return Context(newVariables, functions.toMutableMap())
     }
 
     fun getValue(varName: VarName): TypedValue {
         return variables[varName]?.value ?: throw VariableNotFoundException(varName.name)
     }
-//
-//    private fun getVariable(varName: VarName): Variable {
-//        return variables[varName] ?: throw VariableNotFoundException(varName.name)
-//    }
 
     fun addFunction(function: Function) {
         functions[function.name] = function
@@ -42,7 +38,7 @@ class Context(
     }
 
     override fun toString(): String {
-        return "Context(variables=${variables.values.joinToString("\n")})"
+        return "Context(variables=${variables.values.joinToString ("\n")}, functions=${functions.values.joinToString("\n")}"
     }
 
 

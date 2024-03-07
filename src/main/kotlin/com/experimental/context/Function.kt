@@ -1,15 +1,18 @@
 package com.experimental.context
 
+import com.experimental.compilation.SyntaxElement
 import com.experimental.components.Expression
-import com.experimental.components.Statement
 import com.experimental.exceptions.FunctionInvocationException
+import com.experimental.model.EmptyProgram
+import com.experimental.model.Program
 
 open class Function(
     val name: FunName,
-    private val arguments: List<Argument>,
-    private val statements: List<Statement> = listOf(),
+    arguments: Arguments,
+    private val statements: Program = EmptyProgram,
     private val returnExpression: Expression? = null
 ) {
+    private val arguments = arguments.arguments
 
     open fun execute(context: Context, argumentValues: List<TypedValue>): TypedValue {
         if (arguments.size != argumentValues.size) {
@@ -29,9 +32,15 @@ open class Function(
             Variable(argument.varName, typedValue)
         }.toList()
         val functionContext = context.withVariables(variables)
-        statements.forEach { it.execute(functionContext) }
+        statements.execute(functionContext)
         return returnExpression?.evaluate(functionContext) ?: Nothing
+    }
+
+    override fun toString(): String {
+        return "Function(name=$name, statements=$statements, returnExpression=$returnExpression, arguments=$arguments)"
     }
 }
 
-data class FunName(val name: String)
+data class FunName(val name: String) : SyntaxElement
+
+data class Arguments(val arguments: List<VarDeclaration> = listOf()) : SyntaxElement

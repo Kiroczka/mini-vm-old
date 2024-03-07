@@ -1,14 +1,51 @@
 package com.experimental.compilation
 
-import com.experimental.components.Component
-import com.experimental.components.Expression
-import com.experimental.components.Statement
-import com.experimental.components.expressions.FunctionCallExpression
+sealed interface CompileResult
+data object FailedCompileResult : CompileResult
+sealed interface SuccessCompileResult : CompileResult
+class SuccessRequireMoreCompilationResult(
+    val codeParts: List<CodeToCompile>,
+    val lastIndex: Int
+) : SuccessCompileResult
 
-sealed interface Result<T : Component>
-sealed class SuccessResult<T : Component>(val value: T, val lastIndex: Int) : Result<T>
-class StatementSuccessResult(value: Statement, lastIndex: Int) : SuccessResult<Statement>(value, lastIndex)
-class ExpressionSuccessResult(value: Expression, lastIndex: Int) : SuccessResult<Expression>(value, lastIndex)
-sealed class FailedResult<T : Component> : Result<T>
-data object StatementFailedResult : FailedResult<Statement>()
-data object ExpressionFailedResult : FailedResult<Expression>()
+class SuccessFinalResult(
+    val value: SyntaxElement,
+    val lastIndex: Int
+) : SuccessCompileResult
+
+interface SyntaxElement
+class CodeToCompile(
+    val type: PartType,
+    val code: String
+)
+
+interface PartType
+
+enum class GeneralSyntaxElement : PartType {
+    PROGRAM,
+    STATEMENT,
+    EXPRESSION,
+    COMMENT
+}
+
+enum class StatementSyntaxElement : PartType {
+    VAR_INIT,
+    VAR_DECLARATION,
+    FUN_DECLARATION,
+}
+
+enum class ContextSyntaxElement : PartType {
+    ARGS,
+    VAR_NAME,
+    FUN_NAME,
+    TYPE
+}
+
+enum class ExpressionSyntaxElement : PartType {
+    FUN_CALL,
+    ARITHMETIC,
+    OPERATOR,
+    FUN_CALL_ARGS,
+    VAR,
+    LITERAL
+}

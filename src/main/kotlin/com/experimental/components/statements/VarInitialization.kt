@@ -8,14 +8,14 @@ import com.experimental.context.VarName
 import com.experimental.context.Variable
 import com.experimental.exceptions.VariableHasWrongTypeException
 
-class VarDeclaration(
+class VarInitialization(
     private val varName: VarName,
-    private val type: Type?,
+    private val type: Type,
     private val expression: Expression
 ) : Statement {
     override fun execute(context: Context) {
         val value = expression.evaluate(context)
-        if (type != null && value.type != type) {
+        if (type != Type.NOT_SPECIFIED && value.type != type) {
             throw VariableHasWrongTypeException(varName, type, value.type)
         }
         context.addVariable(Variable(varName, value))

@@ -1,8 +1,11 @@
 package com.experimental.context
 
-enum class Type {
+import com.experimental.compilation.SyntaxElement
+
+enum class Type : SyntaxElement {
     INT,
     TEXT,
+    NOT_SPECIFIED,
     NOTHING
 }
 

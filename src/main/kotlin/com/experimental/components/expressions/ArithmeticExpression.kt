@@ -1,21 +1,21 @@
 package com.experimental.components.expressions
 
+import com.experimental.compilation.SyntaxElement
 import com.experimental.components.Expression
 import com.experimental.context.Context
 import com.experimental.context.IntValue
 import com.experimental.context.TypedValue
 
-sealed class ArithmeticExpression(
+class ArithmeticExpression(
     private val first: Expression,
-    private val second: Expression
+    private val second: Expression,
+    private val operator: Operator
 ) : Expression {
     override fun evaluate(context: Context): TypedValue {
         val firstValue = evaluateInt(context, first)
         val secondValue = evaluateInt(context, second)
-        return IntValue(apply(firstValue, secondValue))
+        return IntValue(operator.apply(firstValue, secondValue))
     }
-
-    abstract fun apply(x: Int, y: Int): Int
 
     private fun evaluateInt(context: Context, expression: Expression): Int {
         val result = expression.evaluate(context)
@@ -26,15 +26,19 @@ sealed class ArithmeticExpression(
     }
 }
 
-class PlusExpression(first: Expression, second: Expression) : ArithmeticExpression(first, second) {
+sealed interface Operator : SyntaxElement {
+    fun apply(x: Int, y: Int): Int
+}
+
+data object PlusOperator : Operator {
     override fun apply(x: Int, y: Int): Int = x + y
 }
 
-class MinusExpression(first: Expression, second: Expression) : ArithmeticExpression(first, second) {
+data object MinusOperator : Operator {
     override fun apply(x: Int, y: Int): Int = x - y
 }
 
 
-class MultiplyExpression(first: Expression, second: Expression) : ArithmeticExpression(first, second) {
+data object MultiplyOperator : Operator {
     override fun apply(x: Int, y: Int): Int = x * y
 }

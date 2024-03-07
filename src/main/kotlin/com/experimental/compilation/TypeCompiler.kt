@@ -4,15 +4,23 @@ import com.experimental.Keywords
 import com.experimental.context.Type
 import com.experimental.exceptions.UnknownTypeException
 
-class TypeCompiler {
+class TypeCompiler : Compiler {
 
-    fun compile(type: String): Type? {
+    override fun compile(code: String): SuccessFinalResult {
+        val type = resolveType(code)
+        //TODO check last index
+        return SuccessFinalResult(type, code.length - 1)
+    }
+
+    private fun resolveType(type: String): Type {
         if (type == Keywords.VAR_KEYWORD) {
-            return null
+            return Type.NOT_SPECIFIED
         }
         if (!Type.entries.map { it.name }.toList().contains(type.uppercase())) {
             throw UnknownTypeException(type)
         }
         return Type.valueOf(type.uppercase())
     }
+
+    override fun getType(): PartType = ContextSyntaxElement.TYPE
 }

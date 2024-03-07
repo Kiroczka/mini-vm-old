@@ -1,6 +1,9 @@
 package com.experimental.compilation
 
-import com.experimental.components.Expression
+import com.experimental.compilation.factories.BuildersFactory
+import com.experimental.compilation.factories.CompilersFactory
 
-class ExpressionCompiler(concreteCompilers: List<ConcreteExpressionCompiler>) :
-    ComponentCompiler<Expression>(concreteCompilers)
+class ExpressionCompiler(compilersFactory: CompilersFactory, buildersFactory: BuildersFactory) :
+    CompilerCoordinator(compilersFactory, buildersFactory) {
+    override fun getType(): PartType = GeneralSyntaxElement.EXPRESSION
+}

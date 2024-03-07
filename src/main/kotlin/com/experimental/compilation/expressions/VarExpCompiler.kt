@@ -1,35 +1,31 @@
-package com.experimental.compilation.statements
+package com.experimental.compilation.expressions
 
 import com.experimental.compilation.CodeToCompile
 import com.experimental.compilation.CompileResult
 import com.experimental.compilation.Compiler
 import com.experimental.compilation.ContextSyntaxElement
+import com.experimental.compilation.ExpressionSyntaxElement
 import com.experimental.compilation.PartType
-import com.experimental.compilation.StatementSyntaxElement
 import com.experimental.compilation.SuccessCompileResult
 import com.experimental.compilation.SuccessRequireMoreCompilationResult
 import com.experimental.compilation.compile
 
-class VarDeclarationCompiler : Compiler {
+class VarExpCompiler : Compiler {
     companion object {
-        private val REGEX = "^\\s*(\\w+)\\s+(\\w+)\\s*".toRegex()
+        private val REGEX = "^\\s*\\w+".toRegex()
     }
 
-    override fun getType(): PartType = StatementSyntaxElement.VAR_DECLARATION
+    override fun getType(): PartType = ExpressionSyntaxElement.VAR
+
     override fun compile(code: String): CompileResult {
         return code.compile(REGEX, this::compile)
     }
 
-    fun compile(matchResult: MatchResult): SuccessCompileResult {
-        val type = matchResult.groupValues[1]
-        val varName = matchResult.groupValues[2]
+    private fun compile(matchResult: MatchResult): SuccessCompileResult {
+        val varName = matchResult.value.trim()
         return SuccessRequireMoreCompilationResult(
-            listOf(
-                CodeToCompile(ContextSyntaxElement.TYPE, type),
-                CodeToCompile(ContextSyntaxElement.VAR_NAME, varName),
-            ),
+            listOf(CodeToCompile(ContextSyntaxElement.VAR_NAME, varName)),
             matchResult.range.last
         )
     }
-
 }

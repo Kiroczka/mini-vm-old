@@ -1,0 +1,27 @@
+package com.experimental.compilation.statements.builders
+
+import com.experimental.compilation.BuilderInput
+import com.experimental.compilation.SyntaxElement
+import com.experimental.compilation.Builder
+import com.experimental.compilation.PartType
+import com.experimental.compilation.StatementSyntaxElement
+import com.experimental.components.Expression
+import com.experimental.components.statements.FunDeclaration
+import com.experimental.context.Arguments
+import com.experimental.context.FunName
+import com.experimental.context.Function
+import com.experimental.model.Program
+
+class FunDeclarationStBuilder : Builder {
+    override fun build(input: BuilderInput): SyntaxElement {
+        validateArgSize(3,4, input)
+        val elements = input.elements
+        val funName = elements[0] as FunName
+        val arguments = elements[1] as Arguments
+        val body = elements[2] as Program
+        val returnExpression = if (elements.size > 3) elements[3] as Expression else null
+        return FunDeclaration(Function(funName, arguments, body, returnExpression))
+    }
+
+    override fun getType(): PartType = StatementSyntaxElement.FUN_DECLARATION
+}

@@ -1,4 +1,3 @@
 package com.experimental.exceptions
 
-class FunctionNotFoundException(name: String) : ExecutionException("Function: $name not found") {
-}
+class FunctionNotFoundException(name: String) : ExecutionException("Function: $name not found")
