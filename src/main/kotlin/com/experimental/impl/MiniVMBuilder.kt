@@ -32,6 +32,11 @@ import com.experimental.model.MiniVM
 class MiniVMBuilder {
 
     fun build(): MiniVM {
+        val programCompiler = buildCompiler()
+        return MiniVMImpl(programCompiler)
+    }
+
+    fun buildCompiler(): ProgramCompiler {
         val expressionBuildersFactory = BuildersFactory(
             listOf(
                 ArithmeticExpBuilder(),
@@ -54,10 +59,7 @@ class MiniVMBuilder {
 
             )
         )
-        val expressionCompiler = ExpressionCompiler(
-            compilersFactory = expressionCompilersFactory,
-            buildersFactory = expressionBuildersFactory
-        )
+        val expressionCompiler = ExpressionCompiler(expressionCompilersFactory, expressionBuildersFactory)
         val statementBuildersFactory = BuildersFactory(
             listOf(
                 VarInitStBuilder(),
@@ -85,6 +87,6 @@ class MiniVMBuilder {
         )
         val statementCompiler = StatementCompiler(statementCompilersFactory, statementBuildersFactory)
         val programCompiler = ProgramCompiler(statementCompiler)
-        return MiniVMImpl(programCompiler)
+        return programCompiler
     }
 }

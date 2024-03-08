@@ -1,6 +1,6 @@
 package com.experimental.compilation
 
-import com.experimental.exceptions.BuilderWrongArgsSizeException
+import com.experimental.exceptions.BuilderIncorrectArgsSizeException
 
 interface Builder {
     fun build(input: BuilderInput): SyntaxElement
@@ -13,7 +13,7 @@ interface Builder {
     fun validateArgSize(minCount: Int, maxCount: Int, input: BuilderInput) {
         val size = input.elements.size
         if (size > maxCount || size < minCount) {
-            throw BuilderWrongArgsSizeException(minCount, maxCount, size)
+            throw BuilderIncorrectArgsSizeException(minCount, maxCount, size)
         }
     }
 

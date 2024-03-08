@@ -8,7 +8,7 @@ class ProgramCompiler(private val statementCompiler: StatementCompiler) :
     Compiler {
     override fun getType(): SyntaxType = GeneralSyntaxType.PROGRAM
 
-    override fun compile(code: String): SuccessFinalResult {
+    override fun compile(code: String): ProgramFinalResult {
         statementCompiler.addCompiler(getType(), this)
         val statements = mutableListOf<Statement>()
         var index = 0
@@ -27,6 +27,6 @@ class ProgramCompiler(private val statementCompiler: StatementCompiler) :
 
         }
         val programImpl = ProgramImpl(statements)
-        return SuccessFinalResult(programImpl, code.length - 1)
+        return ProgramFinalResult(programImpl, code.length - 1)
     }
 }

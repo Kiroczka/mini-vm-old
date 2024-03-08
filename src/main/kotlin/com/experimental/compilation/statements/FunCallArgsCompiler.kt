@@ -7,7 +7,7 @@ import com.experimental.compilation.ExpressionSyntaxType
 import com.experimental.compilation.GeneralSyntaxType
 import com.experimental.compilation.SyntaxType
 import com.experimental.compilation.SuccessFinalResult
-import com.experimental.compilation.SuccessRequireMoreCompilationResult
+import com.experimental.compilation.RequireMoreCompilationResult
 import com.experimental.components.expressions.FunCallArgs
 
 class FunCallArgsCompiler : Compiler {
@@ -21,7 +21,7 @@ class FunCallArgsCompiler : Compiler {
             CodeToCompile(GeneralSyntaxType.EXPRESSION, it)
         }
 
-        return SuccessRequireMoreCompilationResult(elements, code.lastIndex)
+        return RequireMoreCompilationResult(elements, code.lastIndex)
     }
 
 

@@ -7,7 +7,7 @@ import com.experimental.compilation.ContextSyntaxType
 import com.experimental.compilation.SyntaxType
 import com.experimental.compilation.StatementSyntaxType
 import com.experimental.compilation.SuccessFinalResult
-import com.experimental.compilation.SuccessRequireMoreCompilationResult
+import com.experimental.compilation.RequireMoreCompilationResult
 import com.experimental.context.Arguments
 
 class FunArgsCompiler : Compiler {
@@ -21,7 +21,7 @@ class FunArgsCompiler : Compiler {
             CodeToCompile(StatementSyntaxType.VAR_DECLARATION, it)
         }
 
-        return SuccessRequireMoreCompilationResult(elements, code.lastIndex)
+        return RequireMoreCompilationResult(elements, code.lastIndex)
     }
 
 

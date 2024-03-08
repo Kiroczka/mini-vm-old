@@ -6,7 +6,7 @@ import com.experimental.context.Context
 import com.experimental.context.FunName
 import com.experimental.context.TypedValue
 
-class FunctionCallExpression(private val funName: FunName, private val funCallArgs: FunCallArgs) :
+data class FunctionCallExpression(private val funName: FunName, private val funCallArgs: FunCallArgs) :
     Expression {
     override fun evaluate(context: Context): TypedValue {
         val function = context.getFunction(funName)

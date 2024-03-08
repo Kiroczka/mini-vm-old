@@ -1,17 +1,25 @@
 package com.experimental.compilation
 
+import com.experimental.model.Program
+
 sealed interface CompileResult
 data object FailedCompileResult : CompileResult
 sealed interface SuccessCompileResult : CompileResult
-class SuccessRequireMoreCompilationResult(
+class RequireMoreCompilationResult(
     val codeParts: List<CodeToCompile>,
     val lastIndex: Int
 ) : SuccessCompileResult
 
-class SuccessFinalResult(
-    val value: SyntaxElement,
+open class SuccessFinalResult(
+    open val value: SyntaxElement,
     val lastIndex: Int
 ) : SuccessCompileResult
+
+class ProgramFinalResult(
+    override val value: Program,
+    lastIndex: Int
+) : SuccessFinalResult(value, lastIndex)
+
 
 interface SyntaxElement
 class CodeToCompile(

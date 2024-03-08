@@ -7,7 +7,7 @@ import com.experimental.compilation.ContextSyntaxType
 import com.experimental.compilation.ExpressionSyntaxType
 import com.experimental.compilation.SyntaxType
 import com.experimental.compilation.SuccessCompileResult
-import com.experimental.compilation.SuccessRequireMoreCompilationResult
+import com.experimental.compilation.RequireMoreCompilationResult
 import com.experimental.compilation.compile
 
 class VarExpCompiler : Compiler {
@@ -23,7 +23,7 @@ class VarExpCompiler : Compiler {
 
     private fun compile(matchResult: MatchResult): SuccessCompileResult {
         val varName = matchResult.value.trim()
-        return SuccessRequireMoreCompilationResult(
+        return RequireMoreCompilationResult(
             listOf(CodeToCompile(ContextSyntaxType.VAR_NAME, varName)),
             matchResult.range.last
         )

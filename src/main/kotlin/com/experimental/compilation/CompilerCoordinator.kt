@@ -27,27 +27,28 @@ abstract class CompilerCoordinator(
     private fun compile(result: SuccessCompileResult, type: SyntaxType): SuccessFinalResult {
         return when (result) {
             is SuccessFinalResult -> result
-            is SuccessRequireMoreCompilationResult -> {
+            is RequireMoreCompilationResult -> {
                 val element = buildSyntaxElement(result, type)
                 SuccessFinalResult(element, result.lastIndex)
             }
         }
     }
 
-    private fun buildSyntaxElement(result: SuccessRequireMoreCompilationResult, type: SyntaxType): SyntaxElement {
+    private fun buildSyntaxElement(result: RequireMoreCompilationResult, type: SyntaxType): SyntaxElement {
         val elements = buildSyntaxElements(result.codeParts)
         val input = BuilderInput(elements)
         val builder = buildersFactory.getBuilder(type)
         return builder.build(input)
     }
 
-    private fun buildSyntaxElements(elements: List<CodeToCompile>): List<SyntaxElement> {
-        return elements.map { element ->
-            when (val result = chooseCompiler(element.type).compile(element.code)) {
+    private fun buildSyntaxElements(codeParts: List<CodeToCompile>): List<SyntaxElement> {
+        return codeParts.map { codePart ->
+            when (val result = chooseCompiler(codePart.type).compile(codePart.code)) {
                 is SuccessFinalResult -> result.value
-                is SuccessRequireMoreCompilationResult -> buildSyntaxElement(result, element.type)
+                is RequireMoreCompilationResult -> buildSyntaxElement(result, codePart.type)
                 FailedCompileResult ->
-                    throw CompilationException("Unable to compile required syntax element with type: ${element.type} code: ${element.code}")
+                    throw CompilationException(
+                        "Unable to compile required syntax element with type: ${codePart.type} code: ${codePart.code}")
             }
         }
     }

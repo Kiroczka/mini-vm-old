@@ -1,0 +1,10 @@
+fun heronasFormula(int p, int a, int b, int c){
+    println("Calculating...")
+    int x = p-a
+    int y = p-b
+    int z = p-c
+    return p*x*y*z
+}
+int area = heronasFormula(10,1,2,3)
+
+println("Area is: ", area)

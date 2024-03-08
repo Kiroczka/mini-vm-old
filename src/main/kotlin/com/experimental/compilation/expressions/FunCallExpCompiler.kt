@@ -7,7 +7,7 @@ import com.experimental.compilation.ContextSyntaxType
 import com.experimental.compilation.ExpressionSyntaxType
 import com.experimental.compilation.SyntaxType
 import com.experimental.compilation.SuccessCompileResult
-import com.experimental.compilation.SuccessRequireMoreCompilationResult
+import com.experimental.compilation.RequireMoreCompilationResult
 import com.experimental.compilation.compile
 
 class FunCallExpCompiler : Compiler {
@@ -24,7 +24,7 @@ class FunCallExpCompiler : Compiler {
     fun compile(result: MatchResult): SuccessCompileResult {
         val funName = result.groupValues[1]
         val arguments = result.groupValues[2]
-        return SuccessRequireMoreCompilationResult(
+        return RequireMoreCompilationResult(
             listOf(
                 CodeToCompile(ContextSyntaxType.FUN_NAME, funName),
                 CodeToCompile(ExpressionSyntaxType.FUN_CALL_ARGS, arguments),

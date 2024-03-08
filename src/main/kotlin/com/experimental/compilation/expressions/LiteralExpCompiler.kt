@@ -8,7 +8,7 @@ import com.experimental.compilation.compileFinal
 import com.experimental.components.expressions.LiteralExpression
 import com.experimental.context.IntValue
 import com.experimental.context.TextValue
-import com.experimental.exceptions.InternalWrongRegexException
+import com.experimental.exceptions.InternalIncorrectRegexException
 
 class LiteralExpCompiler : Compiler {
     companion object {
@@ -30,7 +30,7 @@ class LiteralExpCompiler : Compiler {
             } else if (textGroup != null) {
                 TextValue(textGroup.value)
             } else {
-                throw InternalWrongRegexException()
+                throw InternalIncorrectRegexException()
             }
         return LiteralExpression(value)
     }

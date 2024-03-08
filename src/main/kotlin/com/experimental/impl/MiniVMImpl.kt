@@ -7,7 +7,7 @@ import com.experimental.model.Program
 
 class MiniVMImpl(private val compiler: ProgramCompiler) : MiniVM {
     override fun execute(code: String) {
-        val program = compiler.compile(code).value as Program
+        val program = compiler.compile(code).value
         val context = Context()
         program.execute(context)
     }

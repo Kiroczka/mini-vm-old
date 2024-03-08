@@ -7,7 +7,7 @@ import com.experimental.compilation.ContextSyntaxType
 import com.experimental.compilation.SyntaxType
 import com.experimental.compilation.StatementSyntaxType
 import com.experimental.compilation.SuccessCompileResult
-import com.experimental.compilation.SuccessRequireMoreCompilationResult
+import com.experimental.compilation.RequireMoreCompilationResult
 import com.experimental.compilation.compile
 
 class VarDeclarationCompiler : Compiler {
@@ -23,7 +23,7 @@ class VarDeclarationCompiler : Compiler {
     fun compile(matchResult: MatchResult): SuccessCompileResult {
         val type = matchResult.groupValues[1]
         val varName = matchResult.groupValues[2]
-        return SuccessRequireMoreCompilationResult(
+        return RequireMoreCompilationResult(
             listOf(
                 CodeToCompile(ContextSyntaxType.TYPE, type),
                 CodeToCompile(ContextSyntaxType.VAR_NAME, varName),

@@ -16,7 +16,9 @@ class TypeCompiler : Compiler {
         if (type == Keywords.VAR_KEYWORD) {
             return Type.NOT_SPECIFIED
         }
-        if (!Type.entries.map { it.name }.toList().contains(type.uppercase())) {
+        if (!Type.entries.any {
+                it.name == type.uppercase()
+            }) {
             throw UnknownTypeException(type)
         }
         return Type.valueOf(type.uppercase())

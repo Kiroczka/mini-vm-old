@@ -6,7 +6,7 @@ import com.experimental.context.Context
 import com.experimental.context.IntValue
 import com.experimental.context.TypedValue
 
-class ArithmeticExpression(
+data class ArithmeticExpression(
     private val first: Expression,
     private val second: Expression,
     private val operator: Operator

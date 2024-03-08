@@ -9,7 +9,7 @@ import com.experimental.components.Expression
 import com.experimental.components.statements.FunDeclaration
 import com.experimental.context.Arguments
 import com.experimental.context.FunName
-import com.experimental.context.Function
+import com.experimental.context.FunctionImpl
 import com.experimental.model.Program
 
 class FunDeclarationStBuilder : Builder {
@@ -22,6 +22,6 @@ class FunDeclarationStBuilder : Builder {
         val arguments = elements[1] as Arguments
         val body = elements[2] as Program
         val returnExpression = if (elements.size > 3) elements[3] as Expression else null
-        return FunDeclaration(Function(funName, arguments, body, returnExpression))
+        return FunDeclaration(FunctionImpl(funName, arguments, body, returnExpression))
     }
 }

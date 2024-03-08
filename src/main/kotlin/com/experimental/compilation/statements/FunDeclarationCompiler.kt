@@ -8,10 +8,10 @@ import com.experimental.compilation.ContextSyntaxType
 import com.experimental.compilation.GeneralSyntaxType
 import com.experimental.compilation.StatementSyntaxType
 import com.experimental.compilation.SuccessCompileResult
-import com.experimental.compilation.SuccessRequireMoreCompilationResult
+import com.experimental.compilation.RequireMoreCompilationResult
 import com.experimental.compilation.SyntaxType
 import com.experimental.compilation.compile
-import com.experimental.exceptions.InternalWrongRegexException
+import com.experimental.exceptions.InternalIncorrectRegexException
 
 class FunDeclarationCompiler : Compiler {
     companion object {
@@ -27,7 +27,7 @@ class FunDeclarationCompiler : Compiler {
     fun compile(matchResult: MatchResult, code: String): SuccessCompileResult {
         val groupsSize = matchResult.groups.size
         if (groupsSize != 4) {
-            throw InternalWrongRegexException()
+            throw InternalIncorrectRegexException()
         }
         val funName = matchResult.groupValues[1]
         val arguments = matchResult.groupValues[2]
@@ -39,7 +39,7 @@ class FunDeclarationCompiler : Compiler {
             CodeToCompile(ContextSyntaxType.ARGS, arguments),
         ) + bodyParts
 
-        return SuccessRequireMoreCompilationResult(elements, endIndex)
+        return RequireMoreCompilationResult(elements, endIndex)
     }
 
     private fun resolveBodyParts(code: String): List<CodeToCompile> {

@@ -1,0 +1,4 @@
+text a = "Hello"
+int bc = 123
+text qwerty = "World"
+int d = 1234

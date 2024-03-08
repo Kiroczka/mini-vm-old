@@ -4,7 +4,6 @@ import com.experimental.compilation.SyntaxElement
 import com.experimental.context.Context
 
 interface Program : SyntaxElement {
-
     fun execute(context: Context)
 
 }
