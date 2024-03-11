@@ -1,72 +1,68 @@
 package com.experimental.compilation.statements
 
 import com.experimental.Keywords
-import com.experimental.compilation.ConcreteStatementCompiler
-import com.experimental.compilation.ExpressionCompiler
-import com.experimental.compilation.MultipleStatementsCompiler
-import com.experimental.compilation.StatementSuccessResult
-import com.experimental.compilation.TypeCompiler
-import com.experimental.components.Expression
-import com.experimental.components.statements.FunDeclaration
-import com.experimental.context.Argument
-import com.experimental.context.FunName
-import com.experimental.context.Function
-import com.experimental.context.VarName
-import com.experimental.exceptions.FunctionCompilationException
-import com.experimental.exceptions.InternalWrongRegexException
+import com.experimental.compilation.CodeToCompile
+import com.experimental.compilation.CompileResult
+import com.experimental.compilation.Compiler
+import com.experimental.compilation.ContextSyntaxType
+import com.experimental.compilation.GeneralSyntaxType
+import com.experimental.compilation.StatementSyntaxType
+import com.experimental.compilation.SuccessCompileResult
+import com.experimental.compilation.RequireMoreCompilationResult
+import com.experimental.compilation.SyntaxType
+import com.experimental.compilation.compile
+import com.experimental.exceptions.InternalIncorrectRegexException
 
-class FunDeclarationCompiler(
-    var statementCompiler: MultipleStatementsCompiler?,
-    private val expressionCompiler: ExpressionCompiler,
-    private val typeCompiler: TypeCompiler
-) :
-    ConcreteStatementCompiler {
+class FunDeclarationCompiler : Compiler {
     companion object {
-        private val REGEX =
-            "^\\s*^fun\\s+(\\w+)\\s*\\(((?:\\w+\\s+\\w+)?\\s*(?:,\\s*\\w+\\s+\\w+\\s*)*)\\)\\s*\\s*\\{((?:.|\\n)*)\\}".toRegex()
-        private val ARGUMENTS_REGEX = "\\s*(\\w+)\\s+(\\w+)\\s*".toRegex()
+        private val REGEX = "^\\s*fun\\s+(\\w+)\\s*\\((.*)\\)\\s*\\s*\\{((?:.|\\n)*)\\}".toRegex()
     }
 
-    override fun getRegex(): Regex = REGEX
+    override fun getType(): SyntaxType = StatementSyntaxType.FUN_DECLARATION
 
-    override fun compile(matchResult: MatchResult, code: String): StatementSuccessResult {
-        val groupsSize = matchResult.groupValues.size
+    override fun compile(code: String): CompileResult {
+        return code.compile(REGEX, this::compile)
+    }
+
+    fun compile(matchResult: MatchResult, code: String): SuccessCompileResult {
+        val groupsSize = matchResult.groups.size
         if (groupsSize != 4) {
-            throw InternalWrongRegexException()
+            throw InternalIncorrectRegexException()
         }
-        val funName = FunName(matchResult.groupValues[1])
-        val arguments = compileArguments(matchResult.groupValues[2])
-        val theRest = matchResult.groupValues[3]
-        val endIndex = theRest.indexOfFirst { it == '}' }
-        val body = theRest.substring(0, endIndex)
-        val returnIndex = body.indexOf(Keywords.RETURN_KEYWORD)
-        val expression = resolveReturnExpression(body, returnIndex)
-        val statements = statementCompiler!!.compile(body.substring(0, returnIndex))
-        val funDeclaration = FunDeclaration(Function(funName, arguments, statements, expression))
-        return StatementSuccessResult(funDeclaration, matchResult.range.last)
+        val funName = matchResult.groupValues[1]
+        val arguments = matchResult.groupValues[2]
+        val bodyParts: List<CodeToCompile> = resolveBodyParts(matchResult.groupValues[3])
+        val endIndex = code.indexOfFirst { it == '}' }
+
+        val elements = listOf(
+            CodeToCompile(ContextSyntaxType.FUN_NAME, funName),
+            CodeToCompile(ContextSyntaxType.ARGS, arguments),
+        ) + bodyParts
+
+        return RequireMoreCompilationResult(elements, endIndex)
     }
 
-    private fun resolveReturnExpression(code: String, returnIndex: Int): Expression? {
-        val expression = if (returnIndex == -1) {
-            null
-        } else {
-            val startIndex = returnIndex + Keywords.RETURN_KEYWORD.length
-            val result = expressionCompiler.compile(code.substring(startIndex))
-            if (code.substring(startIndex + result.lastIndex + 1).isNotBlank()) {
-                throw FunctionCompilationException("There should be nothing after return expression")
-            }
-            result.value
+    private fun resolveBodyParts(code: String): List<CodeToCompile> {
+        val returnIndex = code.indexOf(Keywords.RETURN_KEYWORD)
+        val statementsPart = resolveStatementsPart(returnIndex, code)
+
+        if (returnIndex != -1) {
+            val returnPart = resolveReturnPart(returnIndex, code)
+            return listOf(statementsPart, returnPart)
         }
-        return expression
+        return listOf(statementsPart)
     }
 
-    private fun compileArguments(code: String): List<Argument> {
-        return ARGUMENTS_REGEX.findAll(code).map {
-            val type = typeCompiler.compile(it.groupValues[1])
-            val varName = VarName(it.groupValues[2])
-            Argument(varName, type)
-        }.toList()
+    private fun resolveStatementsPart(returnIndex: Int, code: String): CodeToCompile {
+        val programEnd = if (returnIndex == -1) code.length else returnIndex
+        val program = code.substring(0, programEnd)
+        return CodeToCompile(GeneralSyntaxType.PROGRAM, program)
     }
 
+    private fun resolveReturnPart(returnIndex: Int, code: String): CodeToCompile {
+        val startReturnExpIndex = returnIndex + Keywords.RETURN_KEYWORD.length
+        val returnExpression = code.substring(startReturnExpIndex)
+        return CodeToCompile(GeneralSyntaxType.EXPRESSION, returnExpression)
+    }
 
 }

@@ -1,0 +1,18 @@
+fun sum(int q, int w){
+    int e = q+w
+    return e
+}
+
+fun diff(int r, int t){
+    return r-t
+}
+
+fun product(int y, int u, text i){
+    int haha = y+u
+    println(i)
+    return y*u
+}
+
+fun squareDiff(int a, int b){
+    return a*a-b*b
+}

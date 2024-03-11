@@ -1,15 +1,2 @@
-
-int a = 10
-int b = 5
-text comment = "Sum is"
-int x = a+b
-fun sum(int f1, int f2) {
-    println("Summing")
-    return f1+f2-2
-}
-int c = sum(1,2)
-int d = sum(4,5)
-fun die(){
-    die()
-}
-println(1)
+int a = 0
+int b = 1

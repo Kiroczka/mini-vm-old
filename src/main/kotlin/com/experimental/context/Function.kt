@@ -1,37 +1,56 @@
 package com.experimental.context
 
+import com.experimental.compilation.SyntaxElement
 import com.experimental.components.Expression
-import com.experimental.components.Statement
-import com.experimental.exceptions.FunctionInvocationException
+import com.experimental.exceptions.IncorrectFunArgTypesException
+import com.experimental.exceptions.IncorrectFunArgsSizeException
+import com.experimental.model.EmptyProgram
+import com.experimental.model.Program
 
-open class Function(
-    val name: FunName,
-    private val arguments: List<Argument>,
-    private val statements: List<Statement> = listOf(),
+interface Function {
+    fun getName(): FunName
+    fun execute(context: Context, argumentValues: List<TypedValue>): TypedValue
+
+}
+
+data class FunctionImpl(
+    private val name: FunName,
+    private val arguments: Arguments,
+    private val statements: Program = EmptyProgram,
     private val returnExpression: Expression? = null
-) {
+) : Function {
+    override fun getName(): FunName = name
 
-    open fun execute(context: Context, argumentValues: List<TypedValue>): TypedValue {
-        if (arguments.size != argumentValues.size) {
-            throw FunctionInvocationException(
-                "Function: ${name.name} expected ${arguments.size} arguments but got ${argumentValues.size}"
-            )
-        }
+    override fun execute(context: Context, argumentValues: List<TypedValue>): TypedValue {
+        validateArgSize(argumentValues)
         val variables: List<Variable> = (argumentValues.indices).map {
-            val argument = arguments[it]
             val typedValue = argumentValues[it]
-            if (argument.type != null && argument.type != typedValue.type) {
-                throw FunctionInvocationException(
-                    "Function: ${name.name} expected ${it + 1} argument with type:${argument.type} " +
-                            "but got ${typedValue.type}"
-                )
-            }
-            Variable(argument.varName, typedValue)
+            createVariable(typedValue, it)
         }.toList()
         val functionContext = context.withVariables(variables)
-        statements.forEach { it.execute(functionContext) }
+        statements.execute(functionContext)
         return returnExpression?.evaluate(functionContext) ?: Nothing
+    }
+
+    private fun createVariable(typedValue: TypedValue, it: Int): Variable {
+        val argument = arguments.declarations[it]
+        validateArgType(argument, typedValue, it)
+        return Variable(argument.varName, typedValue)
+    }
+
+    private fun validateArgType(argument: VarDeclaration, typedValue: TypedValue, it: Int) {
+        if (argument.type != null && argument.type != typedValue.type) {
+            throw IncorrectFunArgTypesException(name, it + 1, argument.type, typedValue.type)
+        }
+    }
+
+    private fun validateArgSize(argumentValues: List<TypedValue>) {
+        if (arguments.declarations.size != argumentValues.size) {
+            throw IncorrectFunArgsSizeException(name, arguments.declarations.size, argumentValues.size)
+        }
     }
 }
 
-data class FunName(val name: String)
+data class FunName(val name: String) : SyntaxElement
+
+data class Arguments(val declarations: List<VarDeclaration> = listOf()) : SyntaxElement

@@ -5,7 +5,7 @@ import com.experimental.context.Context
 import com.experimental.context.TypedValue
 import com.experimental.context.VarName
 
-class VariableExpression(private val varName: VarName) : Expression {
+data class VariableExpression(private val varName: VarName) : Expression {
     override fun evaluate(context: Context): TypedValue {
         return context.getValue(varName)
     }

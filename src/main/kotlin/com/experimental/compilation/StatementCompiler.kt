@@ -1,6 +1,10 @@
 package com.experimental.compilation
 
-import com.experimental.components.Statement
+import com.experimental.compilation.factories.BuildersFactory
+import com.experimental.compilation.factories.CompilersFactory
 
-class StatementCompiler(concreteCompilers: List<ConcreteStatementCompiler>) :
-    ComponentCompiler<Statement>(concreteCompilers)
+class StatementCompiler(compilersFactory: CompilersFactory, buildersFactory: BuildersFactory) :
+    CompilerCoordinator(compilersFactory, buildersFactory) {
+    override fun getType(): SyntaxType = GeneralSyntaxType.STATEMENT
+
+}

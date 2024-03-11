@@ -1,12 +1,9 @@
 package com.experimental.context
 
-class Variable(
+import com.experimental.compilation.SyntaxElement
+
+data class Variable(
     val name: VarName,
     val value: TypedValue,
-) {
-    override fun toString(): String {
-        return "Variable(name=$name, value=$value)"
-    }
-}
-
-data class VarName(val name: String)
+)
+data class VarName(val name: String) : SyntaxElement
